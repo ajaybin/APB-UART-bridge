@@ -21,13 +21,12 @@ reg [`DATA_WIDTH-1:0] Cntrl;
 reg [`DATA_WIDTH-1:0] BaudDiv;
 
 //FIFO1 APB -> UART
-reg [`DATA_WIDTH-1:0] TX_FIFO [`FIFO_DEPTH-1:0];
-reg TxFifoFull;
-reg TxFifoEmpty;
+wire TxFifoFull;
+wire TxFifoEmpty;
+reg WriteEn;
 //FIFO2 UART -> APB
-reg [`DATA_WIDTH-1:0] RX_FIFO [`FIFO_DEPTH-1:0]; 
-reg RxFifoFull;
-reg RxFifoEmpty;
+wire RxFifoFull;
+wire RxFifoEmpty;
 
 reg READY;
 reg [`DATA_WIDTH-1:0] RDATA;
@@ -160,6 +159,32 @@ always @(posedge PCLK) begin
 	end
   end
 end
+
+always @* begin
+  WriteEn = 1'b0;
+  if (apb_access || apb_setup) begin
+    if (PWRITE & ReadyDatWr) begin
+      WriteEn = 1'b1;
+    end
+  end
+end
+
+fifo #(
+       .FIFO_DEPTH    (  4),
+       .ADDRESS_WIDTH (  2),
+      )
+TXFIFO
+(
+ .reset(~PRESETn),
+ .WClk(PCLK),
+ .WData(PWDATA),
+ .Wen(WriteEn),
+ .Full(TxFifoFull),
+ .RClk(UCLK),
+ .RInc(ReadInc),
+ .Empty(TxFifoEmpty),
+ .RData(TxLoad)
+);
 
 
 
