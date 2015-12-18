@@ -188,6 +188,7 @@ TXFIFO
 endmodule
 
 interface apb_uart_bridge_if(
+  input PCLK,
   input PRESETn,
   input PSEL,
   input PENABLE,
@@ -199,6 +200,8 @@ interface apb_uart_bridge_if(
   input PSLVERR,
   input TXD,
   input RXD);
+  clocking apb_cb @(posedge PCLK);
+  endclocking
 endinterface
 
 bind apb_uart_bridge apb_uart_bridge_if apb_uart_bridge_if0(.*);

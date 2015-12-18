@@ -17,7 +17,15 @@ class apb_drvr extends uvm_driver#(apb_seq_item);
 
   task run_phase (uvm_phase phase);
     super.run_phase(phase);
-	
+    apb_if.PRESETn <= 0;
+    repeat ($urandom_range(50,10)) @(apb_if.apb_cb);
+    apb_if.PRESETn <= 1;
+
+    forever begin
+      seq_item_port.get_next_item(req);
+      
+      seq_item_port.item_done();
+    end
   endtask  
   
 endclass
