@@ -22,8 +22,19 @@ class apb_drvr extends uvm_driver#(apb_seq_item);
     apb_if.PRESETn <= 1;
 
     forever begin
-      seq_item_port.get_next_item(req);
-      
+      @(m_if.mux_cb)
+      apb_if.PENABLE <= 1'b0;      
+      apb_if.PSEL <= 1'b0;
+      seq_item_port.get_next_item(req);      
+      apb_if.PADDR <= req.addr;
+      apb_if.PWRITE <= req.write;
+      apb_if.PSEL <= 1'b1;
+      if (req.write) begin
+        apb_if.PWDATA <= req.data;
+      end
+      @(m_if.mux_cb)
+      apb_if.PENABLE <= 1'b1;
+      wait(apb_if.PREADY);
       seq_item_port.item_done();
     end
   endtask  
