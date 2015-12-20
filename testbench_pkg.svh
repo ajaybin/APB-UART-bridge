@@ -10,4 +10,5 @@ import uvm_pkg::*;
 `include "apb_env.svh"
 `include "apb_test.svh"
 
+typedef enum {NORMAL,BURST} traffic_e_t;
 endpackage : testbench_pkg

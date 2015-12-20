@@ -23,7 +23,7 @@ class apb_seqr extends uvm_sequencer#(apb_seq_item);
   
   task run_phase (uvm_phase phase);
     super.run_phase(phase);
-	wait_clocks(1000);
+	wait_clocks(10000);
 	end_stimulus = 1;
   endtask
   
